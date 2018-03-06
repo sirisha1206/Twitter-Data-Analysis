@@ -1,0 +1,31 @@
+
+ export HADOOP_CLASSPATH=$(hadoop classpath)
+ echo $HADOOP_CLASSPATH
+ hdfs dfs -mkdir /WordCountHadoop
+ start-dfs.sh
+ start-yarn.sh
+ jps
+ hdfs dfs -mkdir /WordCountHadoop
+ hdfs dfs -mkdir /WordCountHadoop/Input
+ hdfs dfs -put /home/hdsirisha/WordCount/input_data/input.txt /WordCountHadoop/Input
+ cd ..
+ ls
+ mkdir wordcount_classes
+ ls
+ javac -classpath ${HADOOP_CLASSPATH} -d '/home/hdsirisha/WordCount/wordcount_classes/' '/home/hdsirisha/WordCount/wordCount.java' 
+ ls
+ mv wordCount.java WordCount.java
+ javac -classpath ${HADOOP_CLASSPATH} -d '/home/hdsirisha/WordCount/wordcount_classes/' '/home/hdsirisha/WordCount/wordCount.java' 
+ javac -classpath ${HADOOP_CLASSPATH} -d '/home/hdsirisha/WordCount/wordcount_classes/' '/home/hdsirisha/WordCount/WordCount.java' 
+ ls
+ cd wordcount_classes/
+ ls
+ jar -cvf wordcount.jar -C /home/hdsirisha/WordCount/wordcount_classes/ .
+ ls
+ hdfs dfs -ls /WordCountHadoop/
+ hadoop jar '/home/hdsirisha/WordCount/wordcount.jar' WordCount /WordCountHadoop/Input /WordCountHadoop/Output
+ hdfs dfs -ls /WordCountHadoop/
+ hdfs dfs -ls /WordCountHadoop/Output
+ hdfs dfs -cat /WordCountHadoop/Output
+ hdfs dfs -cat /WordCountHadoop/Output/part-r-00000
+
