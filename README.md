@@ -21,3 +21,15 @@ TwitterDataCollection contains
     hashtagsurlsdata.py:python code to extract the hash tags and urls in the text file.
     
 sparkwc_output/OutputSpark:Output files generated in hdfs after running word count in spark.
+
+# Phase 2
+
+queries file contains the all the analytic queries that are executed
+
+spark_output contains
+
+    All the output files that are generated after execution of each query
+    
+Data Visualization contains
+
+    html,css,amcharts js files for visualization
