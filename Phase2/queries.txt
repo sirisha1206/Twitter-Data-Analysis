@@ -1,0 +1,307 @@
+
+
+scala> val query1 = sqlContext.sql("select count(*) as count,user.location from twitterData where user.location is not null group by user.location order by count desc");
+query1: org.apache.spark.sql.DataFrame = [count: bigint, location: string]
+
+scala> query1.show();
++-----+--------------------+                                                    
+|count|            location|
++-----+--------------------+
+| 1378|       United States|
+|  602|     California, USA|
+|  586|     Los Angeles, CA|
+|  536|     London, England|
+|  497|               India|
+|  481|      United Kingdom|
+|  445|         Houston, TX|
+|  434|England, United K...|
+|  428|          Texas, USA|
+|  391|              London|
+|  361|         Chicago, IL|
+|  341|                 USA|
+|  324|                  UK|
+|  319|              Canada|
+|  318|        Florida, USA|
+|  301|        South Africa|
+|  300|        New York, NY|
+|  288|         Atlanta, GA|
+|  264|       New York, USA|
+|  263|      Lagos, Nigeria|
++-----+--------------------+
+only showing top 20 rows
+
+
+
+
+scala> query1.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("/home/query1");
+                                                                                
+
+
+scala> val query2 = sqlContext.sql("select count(*) as count,user.lang from twitterData group by user.lang order by count desc");
+query2: org.apache.spark.sql.DataFrame = [count: bigint, lang: string]
+
+scala> query2.show();
++------+-----+                                                                  
+| count| lang|
++------+-----+
+|110342|   en|
+| 11124| null|
+|  6154|   es|
+|  2808|   pt|
+|  2459|   fr|
+|  2424|en-gb|
+|  1173|   de|
+|   787|   ko|
+|   764|   tr|
+|   740|   ru|
+|   729|   it|
+|   662|en-GB|
+|   625|   ar|
+|   585|   ja|
+|   576|   nl|
+|   568|   pl|
+|   426|   th|
+|   418|   id|
+|   189|   sv|
+|   132|   el|
++------+-----+
+only showing top 20 rows
+
+
+scala> query2.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("/home/query2");
+                                                                                
+
+
+
+
+scala> val query3 = sqlContext.sql("select max(user.friends_count) as count,user.name from twitterData where user.verified =  true group by user.name order by count desc");
+query3: org.apache.spark.sql.DataFrame = [count: bigint, name: string]
+
+scala> query3.show();
++-------+--------------------+                                                  
+|  count|                name|
++-------+--------------------+
+|1226382|       Shinobi Ninja|
+| 744394|CallingAllAstronauts|
+| 535389|            TH1RT3EN|
+| 522934|              Baby G|
+| 295886|        Xbox Support|
+| 173931|               Tesco|
+| 154726|       Jeff Emmerson|
+| 153119|        ComcastCares|
+| 145625|           Food Tank|
+| 137886|               Slack|
+| 135446|            SwiftKey|
+| 127172| Codie Prevost Music|
+| 118963|  Manchester Airport|
+| 107180|   ASOS Here to Help|
+| 104409|     British Airways|
+| 103661|Something Like Kites|
+| 102240|   American Airlines|
+|  80301|      Safaricom Care|
+|  78485|         Dirk Hooper|
+|  77210|     Verizon Support|
++-------+--------------------+
+only showing top 20 rows
+
+
+scala> query3.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("/home/query3");
+                                                                               
+
+scala> val query4 = sqlContext.sql("select retweeted_status.retweet_count,user.name from twitterData where retweeted = false and user.lang = 'en' order by retweeted_status.retweet_count desc");
+query4: org.apache.spark.sql.DataFrame = [retweet_count: bigint, name: string]
+
+scala> query4.show();
++-------------+--------------------+                                            
+|retweet_count|                name|
++-------------+--------------------+
+|       499500|𝕒𝕤𝕙𝕖 𝕜𝕠𝕣𝕚...|
+|       387381|    Dreamer Girl1661|
+|       317150|ɑyɑ ~ɦixtɑpɛ tomo...|
+|       317147| Anime Loving ARMY🍀|
+|       245138|             auemy😎|
+|       191943|              Inspar|
+|       177645|     Music is my chi|
+|       159306|        Haley Autrey|
+|       159305|        krista frost|
+|       148587|        JordyPoppins|
+|       148587|        Deji Fatunbi|
+|       148585|    harlowe james 🔥|
+|       148585|               Wendy|
+|       148582|               Elena|
+|       148578|           chelsea ✌|
+|       148577|                Didz|
+|       148574|         Jocilynn 💛|
+|       148561|   laurens mannaerts|
+|       148549|          Sticks ⛹🏿|
+|       148546|           brittney.|
++-------------+--------------------+
+only showing top 20 rows
+
+
+scala> query4.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("/home/query4");
+                                                                                
+scala> val query5 = sqlContext.sql("select user.name,max(user.followers_count) as followers_count,max(user.friends_count) as friends_count ,max(user.favourites_count) as favourites_count,max(user.statuses_count) as statuses_count from twitterData group by user.name order by max(user.followers_count) desc");
+query5: org.apache.spark.sql.DataFrame = [name: string, followers_count: bigint ... 3 more fields]
+
+scala> query5.show();
++--------------------+---------------+-------------+----------------+--------------+
+|                name|followers_count|friends_count|favourites_count|statuses_count|
++--------------------+---------------+-------------+----------------+--------------+
+|   Victoria's Secret|       11490813|         1236|            4053|        149686|
+|          girl posts|        9830237|       249113|           72948|          4877|
+|              People|        7879529|         1757|            5133|        200060|
+|      Nicole Polizzi|        6959028|          429|             180|         32360|
+|   Ebrahim Hemmatnia|        5123029|            0|            5707|         18503|
+|         vir sanghvi|        4352624|           45|            5744|         39684|
+|          McDonald's|        3564075|        14507|            3533|        419908|
+|         Alex Morgan|        3554175|          470|            1881|          4947|
+|                Inc.|        2657686|         1696|            1245|        217307|
+|          Pokémon GO|        2645580|           19|              43|           523|
+|           Too Sassy|        2600391|          204|             784|         14483|
+|             SUBWAY®|        2470138|        32526|           10598|         44269|
+|        Chicago Cubs|        2436646|          587|           27943|         70365|
+|  E Film Productions|        2422385|       157906|          295658|        319338|
+|           When Boys|        2410292|        38850|            1690|        161799|
+|            Engadget|        2400966|          283|            1385|        153857|
+|Royal Dutch Airlines|        2384129|        66883|             395|        969485|
+|Transport for London|        2306592|          179|            1031|         56925|
+|          Forever 21|        2304421|          599|            4274|         18618|
+|             Animals|        2272921|            0|               3|          2452|
++--------------------+---------------+-------------+----------------+--------------+
+only showing top 20 rows
+
+
+scala> query5.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("/home/query5");
+                                                                                
+scala> val query6 = sqlContext.sql("select user.time_zone,count(*) as count from twitterData where user.time_zone is not null group by user.time_zone order by count desc");
+query6: org.apache.spark.sql.DataFrame = [time_zone: string, count: bigint]
+
+scala> query6.show();
++--------------------+-----+                                                    
+|           time_zone|count|
++--------------------+-----+
+|Pacific Time (US ...|20010|
+|Eastern Time (US ...|10082|
+|Central Time (US ...| 6879|
+|              London| 5112|
+|Atlantic Time (Ca...| 2203|
+|               Quito| 1930|
+|           Amsterdam| 1704|
+|             Arizona| 1565|
+|Mountain Time (US...| 1351|
+|              Hawaii|  907|
+|            Brasilia|  780|
+|          Casablanca|  765|
+|              Athens|  763|
+|           New Delhi|  578|
+|               Paris|  527|
+|              Dublin|  512|
+|              Alaska|  508|
+|             Beijing|  399|
+|        Kuala Lumpur|  392|
+|           Greenland|  361|
++--------------------+-----+
+only showing top 20 rows
+
+
+scala> query6.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("/home/query6");
+                                                      
+scala> val query7 = sqlContext.sql("select substring(user.created_at,5,3) as month,count(*) as count from twitterData where text like '%happy%' group by month order by count desc");
+query7: org.apache.spark.sql.DataFrame = [month: string, count: bigint]
+
+scala> query7.show();
++-----+-----+                                                                   
+|month|count|
++-----+-----+
+|  Feb|  719|
+|  Jan|  699|
+|  Dec|  631|
+|  Jul|  569|
+|  Nov|  557|
+|  Oct|  550|
+|  Jun|  537|
+|  May|  531|
+|  Sep|  523|
+|  Mar|  514|
+|  Aug|  512|
+|  Apr|  508|
++-----+-----+
+
+
+scala> query7.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("/home/query7");
+
+scala> val query8 = sqlContext.sql("select count(*) as count,q1.text from (select case when text like '%happy%' then 'happy' when text like '%sad%' then 'sad' when text like '%anger%' then 'anger' when text like '%surprise%' then 'surprise' when text like '%depressed%' then 'depressed'  when text like '%fear%' then 'fear' when text like '%anxiety%' then 'anxiety' else 'other emotion' end as text from twitterData)q1 group by q1.text");
+query8: org.apache.spark.sql.DataFrame = [count: bigint, text: string]
+
+scala> query8.show();
++------+-------------+                                                          
+| count|         text|
++------+-------------+
+|  3291|          sad|
+|131196|other emotion|
+|   198|    depressed|
+|   548|        anger|
+|   926|         fear|
+|  1067|     surprise|
+|  6850|        happy|
+|   584|      anxiety|
++------+-------------+
+
+
+scala> query8.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("/home/query8");
+
+scala> val query9 = sqlContext.sql("select q2.year,max(case when text = 'sad' then q2.count else 0 end) as sad,max(case when text = 'happy' then q2.count else 0 end) as happy,max(case when text = 'anger' then q2.count else 0 end) as anger,max(case when text = 'surprise' then q2.count else 0 end) as surprise,max(case when text = 'other emotion' then q2.count else 0 end) as other from (select q1.year,q1.text,count(*) as count from (select substring(user.created_at,27,4) as year,case when text like '%happy%' then 'happy' when text like '%sad%' then 'sad' when text like '%anger%' then 'anger' when text like '%surprise%' then 'surprise' else 'other emotion' end as text from twitterData)q1 group by q1.year,q1.text)q2 where q2.year is not null group by q2.year order by q2.year desc");
+query9: org.apache.spark.sql.DataFrame = [year: string, sad: bigint ... 4 more fields]
+
+scala> query9.show();
++----+---+-----+-----+--------+-----+                                           
+|year|sad|happy|anger|surprise|other|
++----+---+-----+-----+--------+-----+
+|2018|143|  418|   30|      53| 7111|
+|2017|463| 1191|  105|     163|19550|
+|2016|381|  785|   60|     116|14280|
+|2015|344|  707|   53|     100|12304|
+|2014|385|  706|   54|     121|12050|
+|2013|339|  706|   69|      98|12028|
+|2012|353|  736|   49|     139|12974|
+|2011|353|  667|   56|     110|12155|
+|2010|212|  421|   20|      58| 7470|
+|2009|263|  432|   45|      96|10075|
+|2008| 48|   64|    7|       9| 1494|
+|2007|  6|   17|    0|       4|  270|
+|2006|  1|    0|    0|       0|   19|
++----+---+-----+-----+--------+-----+
+
+
+scala> query9.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("/home/query9");
+
+
+
+scala> val query10 = sqlContext.sql("select count(*) as count,substring(user.created_at,27,4) as year from twitterData group by year ");
+query10: org.apache.spark.sql.DataFrame = [count: bigint, year: string]
+
+scala> query10.show();
++-----+----+                                                                    
+|count|year|
++-----+----+
+|15622|2016|
+|14251|2012|
+|21472|2017|
+|13316|2014|
+|13240|2013|
+|11124|null|
+|10911|2009|
+| 7755|2018|
+|   20|2006|
+|13341|2011|
+| 1622|2008|
+|  297|2007|
+|13508|2015|
+| 8181|2010|
++-----+----+
+
+
+scala> query10.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("/home/query10");
+                                                                                
+
